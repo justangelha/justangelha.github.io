@@ -13,6 +13,27 @@
     <link rel="stylesheet" href="css/style.css" />
     <script src="js/data.js" defer></script>
     <script src="js/script.js" defer></script>
+    <script defer>
+      document.addEventListener("DOMContentLoaded", () => {
+        if (new URLSearchParams(location.search).get("id") !== "first-violin-steps") return;
+        const article = (window.ARTICLES || []).find(item => item.id === "first-violin-steps");
+        if (!article) return;
+        let keywords = document.querySelector('meta[name="keywords"]');
+        if (!keywords) {
+          keywords = document.createElement("meta");
+          keywords.name = "keywords";
+          document.head.appendChild(keywords);
+        }
+        keywords.content = article.keywords.join(", ");
+        let canonical = document.querySelector('link[rel="canonical"]');
+        if (!canonical) {
+          canonical = document.createElement("link");
+          canonical.rel = "canonical";
+          document.head.appendChild(canonical);
+        }
+        canonical.href = "https://justangelha.github.io/article.html?id=first-violin-steps";
+      });
+    </script>
   <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
     (function(m,e,t,r,i,k,a){
