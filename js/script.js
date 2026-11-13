@@ -170,13 +170,8 @@
             <a href="favorites.html">Избранное</a>
           </div>
           <div>
-            <h2>Письмо раз в месяц</h2>
-            <p>Одна пьеса, один полезный приём и история для внимательного слушания.</p>
-            <form class="subscribe-form" data-demo-form>
-              <label class="sr-only" for="footer-email">Ваш email</label>
-              <input id="footer-email" type="email" placeholder="name@example.ru" required>
-              <button type="submit" aria-label="Подписаться">${icons.arrow}</button>
-            </form>
+            <h2>Для читателей</h2>
+            <p>Сохраняйте материалы в избранном, чтобы возвращаться к ним в этом браузере.</p>
           </div>
         </div>
         <div class="container footer-bottom">
@@ -598,20 +593,6 @@
       });
       back.addEventListener("click", () => scrollTo({ top: 0, behavior: "smooth" }));
     }
-
-    document.querySelectorAll("[data-demo-form]").forEach((form) =>
-      form.addEventListener("submit", (event) => {
-        event.preventDefault();
-        if (!form.classList.contains("contact-form"))
-          localStorage.setItem("kamertona-newsletter-demo", "subscribed");
-        form.reset();
-        showToast(
-          form.classList.contains("contact-form")
-            ? "Спасибо! Сообщение сохранено в демонстрационном режиме."
-            : "Демонстрационная подписка сохранена локально",
-        );
-      }),
-    );
 
     const page = document.body.dataset.page;
     const activeKey =
