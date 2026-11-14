@@ -358,7 +358,7 @@ svg {
   align-items: center;
   margin-bottom: 32px;
   color: var(--wine);
-  font-size: 10px;
+  font-size: 14px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
@@ -619,7 +619,7 @@ svg {
   bottom: 10px;
   color: rgba(255, 255, 255, 0.92);
   font-family: var(--serif);
-  font-size: 13px;
+  font-size: 17px;
   text-shadow: 0 1px 5px #000;
 }
 .card-body {
@@ -1085,6 +1085,9 @@ svg {
   font-size: 19px;
   line-height: 1.82;
 }
+.article-content section > p {
+  text-indent: 1.25em;
+}
 .article-content blockquote {
   margin: 42px 0;
   padding: 34px 0 34px 32px;
@@ -1217,7 +1220,7 @@ svg {
 
 .contact-grid {
   display: grid;
-  grid-template-columns: 0.75fr 1.25fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(50px, 9vw, 120px);
 }
 .contact-details h2,
@@ -1238,6 +1241,9 @@ svg {
 .contact-list li {
   padding: 14px 0;
   display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 18px;
   justify-content: space-between;
   border-top: 1px solid var(--line);
 }
@@ -1247,8 +1253,26 @@ svg {
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
-.contact-list a:hover {
+.contact-list a {
   color: var(--wine);
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.contact-list a:visited {
+  color: var(--visited);
+}
+.contact-list .contact-author-link {
+  text-decoration-color: var(--paper);
+}
+.contact-list .contact-author-link.is-visited {
+  color: var(--visited);
+  text-decoration-color: currentColor;
+}
+.contact-list .contact-author-link:visited,
+.contact-list .contact-author-link:hover,
+.contact-list .contact-author-link:focus-visible {
+  text-decoration-color: currentColor;
 }
 .form-row {
   display: grid;

@@ -589,6 +589,16 @@
   }
 
   function bindGlobalEvents() {
+    const authorLink = document.querySelector(".contact-author-link");
+    if (authorLink) {
+      const visitedKey = "kamertona-contact-author-visited";
+      authorLink.classList.toggle("is-visited", localStorage.getItem(visitedKey) === "1");
+      authorLink.addEventListener("click", () => {
+        authorLink.classList.add("is-visited");
+        localStorage.setItem(visitedKey, "1");
+      });
+    }
+
     document.addEventListener("click", (event) => {
       const favorite = event.target.closest("[data-favorite]");
       if (favorite) {
