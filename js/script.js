@@ -56,6 +56,8 @@
       button.classList.toggle("is-active", added);
       button.setAttribute("aria-pressed", String(added));
       button.setAttribute("aria-label", added ? "Удалить из избранного" : "Добавить в избранное");
+      const text = button.querySelector(".save-label");
+      if (text) text.textContent = added ? "В избранном" : "Сохранить";
     });
     showToast(added ? "Материал добавлен в избранное" : "Материал удалён из избранного");
     if (document.body.dataset.page === "favorites") renderFavorites();
@@ -92,6 +94,7 @@
               type="button"
               aria-label="Открыть меню"
               aria-expanded="false"
+              aria-controls="main-nav"
             >
               <span></span>
               <span></span>
@@ -99,11 +102,11 @@
             </button>
           </div>
         </div>
-        <nav class="main-nav" aria-label="Основная навигация">
+        <nav id="main-nav" class="main-nav" aria-label="Основная навигация">
           <div class="container nav-inner">
             <a href="index.html" data-nav="home">Главная</a>
             <div class="nav-group">
-              <a href="catalog.html" data-nav="catalog">Каталог <span aria-hidden="true">⌄</span></a>
+              <a href="catalog.html" data-nav="catalog">Каталог <span class="nav-chevron" aria-hidden="true">⌄</span></a>
               <div class="mega-menu">
                 <div>
                   <strong>Обучение</strong>
@@ -136,6 +139,7 @@
               Полезное
             </a>
             <a href="contacts.html" data-nav="contacts">Контакты</a>
+            <a class="mobile-favorites" href="favorites.html" data-nav="favorites">Избранное</a>
           </div>
         </nav>
       </header>`;
@@ -278,6 +282,15 @@
     if (el) el.innerHTML = items.map((item) => cardMarkup(item, { compact })).join("");
   }
 
+  function setActiveNav(key) {
+    document.querySelectorAll("[data-nav]").forEach((link) => {
+      const active = link.dataset.nav === key;
+      link.classList.toggle("is-active", active);
+      if (active) link.setAttribute("aria-current", "page");
+      else link.removeAttribute("aria-current");
+    });
+  }
+
   function renderCatalog() {
     if (document.body.dataset.page !== "catalog") return;
     const grid = document.querySelector("[data-catalog-grid]");
@@ -285,7 +298,7 @@
     const empty = document.querySelector("[data-catalog-empty]");
     const params = new URLSearchParams(location.search);
     let active = params.get("category") || "Все";
-    const sub = params.get("sub");
+    let sub = params.get("sub");
     const allowed = ["Все", "Фортепиано", "Скрипка", "Теория музыки", "Статьи", "Подборки"];
     if (!allowed.includes(active)) active = "Все";
 
@@ -309,7 +322,16 @@
     }
     document
       .querySelectorAll("[data-filter]")
-      .forEach((btn) => btn.addEventListener("click", () => apply(btn.dataset.filter)));
+      .forEach((btn) => btn.addEventListener("click", () => {
+        sub = null;
+        params.delete("sub");
+        if (btn.dataset.filter === "Все") params.delete("category");
+        else params.set("category", btn.dataset.filter);
+        const query = params.toString();
+        history.replaceState(null, "", location.pathname + (query ? "?" + query : "") + location.hash);
+        setActiveNav("catalog");
+        apply(btn.dataset.filter);
+      }));
     apply(active);
   }
 
@@ -392,14 +414,26 @@
   function renderArticle() {
     if (document.body.dataset.page !== "article") return;
     const id = new URLSearchParams(location.search).get("id");
-    const article = articles.find((item) => item.id === id) || articles[0];
+    const root = document.querySelector("[data-article]");
+    const article = articles.find((item) => item.id === id);
+    if (!article) {
+      document.title = "Материал не найден — Камертона";
+      root.innerHTML = `
+        <section class="section container">
+          <div class="empty-state">
+            <h1>Материал не найден</h1>
+            <p>Проверьте адрес или выберите публикацию в каталоге.</p>
+            <a class="primary-link" href="catalog.html">Открыть каталог</a>
+          </div>
+        </section>`;
+      return;
+    }
     const index = articles.indexOf(article);
     const prev = articles[(index - 1 + articles.length) % articles.length];
     const next = articles[(index + 1) % articles.length];
     const related = articles
       .filter((item) => item.id !== article.id && item.category === article.category)
       .slice(0, 3);
-    const root = document.querySelector("[data-article]");
     const categoryUrl = encodeURIComponent(article.category);
     const favoriteClass = isFavorite(article.id) ? " is-active" : "";
     const favoriteText = isFavorite(article.id) ? "В избранном" : "Сохранить";
@@ -450,7 +484,7 @@
               aria-pressed="${isFavorite(article.id)}"
             >
               ${icons.heart}
-              <span>${favoriteText}</span>
+              <span class="save-label">${favoriteText}</span>
             </button>
           </div>
         </header>
@@ -565,14 +599,23 @@
 
     const menuToggle = document.querySelector(".menu-toggle");
     const nav = document.querySelector(".main-nav");
-    if (menuToggle && nav)
-      menuToggle.addEventListener("click", () => {
-        const open = nav.classList.toggle("is-open");
+    if (menuToggle && nav) {
+      const mobileNav = matchMedia("(max-width: 1000px)");
+      function setMenuOpen(open) {
+        nav.classList.toggle("is-open", open);
         menuToggle.classList.toggle("is-open", open);
         menuToggle.setAttribute("aria-expanded", String(open));
         menuToggle.setAttribute("aria-label", open ? "Закрыть меню" : "Открыть меню");
         document.body.classList.toggle("menu-open", open);
+      }
+      menuToggle.addEventListener("click", () => setMenuOpen(!nav.classList.contains("is-open")));
+      mobileNav.addEventListener("change", () => setMenuOpen(false));
+      document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape" || !nav.classList.contains("is-open")) return;
+        setMenuOpen(false);
+        menuToggle.focus();
       });
+    }
 
     document
       .querySelectorAll(".theme-toggle, .theme-toggle-footer")
@@ -596,12 +639,10 @@
 
     const page = document.body.dataset.page;
     const activeKey =
-      page === "article" || page === "favorites" || page === "search" ? "catalog" : page;
-    const active = document.querySelector(`[data-nav="${activeKey}"]`);
-    if (active) {
-      active.classList.add("is-active");
-      active.setAttribute("aria-current", "page");
-    }
+      page === "catalog" && new URLSearchParams(location.search).get("sub") === "Советы начинающим"
+        ? "useful"
+        : page;
+    setActiveNav(activeKey);
     updateFavoriteCounters();
   }
 
