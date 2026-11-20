@@ -8,48 +8,24 @@
       name="description"
       content="Практический материал о музыке, занятиях и внимательном слушании в блоге Камертона."
     />
-    <meta name="robots" content="index, follow" />
     <link rel="icon" href="images/theory.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="css/style.css?v=defense-2" />
-    <script src="js/data.js" defer></script>
-    <script src="js/script.js?v=defense-2" defer></script>
-    <script defer>
-      document.addEventListener("DOMContentLoaded", () => {
-        if (new URLSearchParams(location.search).get("id") !== "first-violin-steps") return;
-        const article = (window.ARTICLES || []).find(item => item.id === "first-violin-steps");
-        if (!article) return;
-        let keywords = document.querySelector('meta[name="keywords"]');
-        if (!keywords) {
-          keywords = document.createElement("meta");
-          keywords.name = "keywords";
-          document.head.appendChild(keywords);
-        }
-        keywords.content = article.keywords.join(", ");
-        let canonical = document.querySelector('link[rel="canonical"]');
-        if (!canonical) {
-          canonical = document.createElement("link");
-          canonical.rel = "canonical";
-          document.head.appendChild(canonical);
-        }
-        canonical.href = "https://justangelha.github.io/article.html?id=first-violin-steps";
-      });
-    </script>
-  <!-- Yandex.Metrika counter -->
-<script type="text/javascript">
-    (function(m,e,t,r,i,k,a){
-        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-        m[i].l=1*new Date();
-        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113590816', 'ym');
-    ym(113590816, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
-</script>
-<!-- /Yandex.Metrika counter -->
+    <link rel="stylesheet" href="css/style.css?v=seo-qa" />
+    <script src="js/data.js?v=seo-qa" defer></script>
+    <script src="js/script.js?v=seo-qa" defer></script>
+    <script src="js/metrika.js" defer></script>
   </head>
   <body data-page="article">
   <noscript><div><img src="https://mc.yandex.ru/watch/113590816" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
     <div data-site-header></div>
-    <main id="main" data-article></main>
+    <main id="main" data-article>
+      <section class="section container">
+        <div class="empty-state">
+          <h1>Материалы «Камертоны»</h1>
+          <p>Для чтения статьи нужен JavaScript. Список публикаций доступен в каталоге.</p>
+          <a class="primary-link" href="catalog.html">Открыть каталог</a>
+        </div>
+      </section>
+    </main>
     <div data-site-footer></div>
   </body>
 </html>

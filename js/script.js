@@ -4,6 +4,8 @@
   const articles = window.ARTICLES || [];
   const favoriteKey = "kamertona-favorites";
   const themeKey = "kamertona-theme";
+  const siteOrigin = "https://justangelha.github.io/";
+  const temporarySettings = new Map();
 
   const icons = {
     search:
@@ -30,17 +32,33 @@
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M14 7l5 5-5 5"></path></svg>',
   };
 
-  function getFavorites() {
+  function readSetting(key) {
+    if (temporarySettings.has(key)) return temporarySettings.get(key);
     try {
-      return JSON.parse(localStorage.getItem(favoriteKey)) || [];
-    } catch (_) {
-      return [];
+      return localStorage.getItem(key);
+    } catch {
+      return null;
     }
   }
 
-  function setFavorites(ids) {
-    localStorage.setItem(favoriteKey, JSON.stringify(ids));
-    updateFavoriteCounters();
+  function writeSetting(key, value) {
+    try {
+      localStorage.setItem(key, value);
+      temporarySettings.delete(key);
+      return true;
+    } catch {
+      temporarySettings.set(key, value);
+      return false;
+    }
+  }
+
+  function getFavorites() {
+    try {
+      const ids = JSON.parse(readSetting(favoriteKey));
+      return Array.isArray(ids) ? ids.filter((id) => typeof id === "string") : [];
+    } catch {
+      return [];
+    }
   }
 
   function isFavorite(id) {
@@ -51,7 +69,8 @@
     const ids = getFavorites();
     const added = !ids.includes(id);
     const next = added ? [...ids, id] : ids.filter((item) => item !== id);
-    setFavorites(next);
+    const persisted = writeSetting(favoriteKey, JSON.stringify(next));
+    updateFavoriteCounters();
     document.querySelectorAll('[data-favorite="' + id + '"]').forEach((button) => {
       button.classList.toggle("is-active", added);
       button.setAttribute("aria-pressed", String(added));
@@ -59,7 +78,8 @@
       const text = button.querySelector(".save-label");
       if (text) text.textContent = added ? "В избранном" : "Сохранить";
     });
-    showToast(added ? "Материал добавлен в избранное" : "Материал удалён из избранного");
+    const message = added ? "Материал добавлен в избранное" : "Материал удалён из избранного";
+    showToast(persisted ? message : message + " только на этой странице. Хранилище браузера недоступно.");
     if (document.body.dataset.page === "favorites") renderFavorites();
   }
 
@@ -68,7 +88,7 @@
       <a class="skip-link" href="#main">Перейти к содержанию</a>
       <header class="site-header">
         <div class="header-top container">
-          <a class="brand" href="index.html" aria-label="Камертона — на главную">
+          <a class="brand" href="./" aria-label="Камертона — на главную">
             <span class="brand-mark" aria-hidden="true">𝄞</span>
             <span><strong>Камертона</strong><small>блог о музыке как увлечении</small></span>
           </a>
@@ -104,7 +124,7 @@
         </div>
         <nav id="main-nav" class="main-nav" aria-label="Основная навигация">
           <div class="container nav-inner">
-            <a href="index.html" data-nav="home">Главная</a>
+            <a href="./" data-nav="home">Главная</a>
             <div class="nav-group">
               <a href="catalog.html" data-nav="catalog">Каталог <span class="nav-chevron" aria-hidden="true">⌄</span></a>
               <div class="mega-menu">
@@ -124,7 +144,7 @@
                 </div>
                 <div class="menu-note">
                   <span>Новая тема</span>
-                  <b>Как заниматься по 20 минут и слышать результат</b>
+                  <b>Как начать играть на фортепиано с нуля</b>
                   <a href="article.html?id=piano-from-zero">
                     Читать материал ${icons.arrow}
                   </a>
@@ -150,7 +170,7 @@
       <footer class="site-footer">
         <div class="container footer-grid">
           <div>
-            <a class="brand footer-brand" href="index.html">
+            <a class="brand footer-brand" href="./">
               <span class="brand-mark">𝄞</span>
               <span>
                 <strong>Камертона</strong>
@@ -214,6 +234,8 @@
         <img
           src="${article.image}"
           alt="${article.imageAlt}"
+          width="1200"
+          height="820"
           loading="lazy"
         >
         <span class="image-number">${articleNumber}</span>
@@ -251,13 +273,13 @@
       featuredEl.innerHTML = `
         <article class="featured-story">
           <a class="featured-image" href="${articleUrl(featured)}">
-            <img src="${featured.image}" alt="${featured.imageAlt}">
+            <img src="${featured.image}" alt="${featured.imageAlt}" width="1200" height="820" loading="lazy">
           </a>
           <div class="featured-copy">
             <div class="eyebrow">Выбор редакции · ${featured.category}</div>
-            <h2>
+            <h3>
               <a href="${articleUrl(featured)}">${featured.title}</a>
-            </h2>
+            </h3>
             <p>${featured.excerpt}</p>
             <div class="story-meta">
               <time datetime="${featured.isoDate}">${featured.date}</time>
@@ -301,6 +323,12 @@
     let sub = params.get("sub");
     const allowed = ["Все", "Фортепиано", "Скрипка", "Теория музыки", "Статьи", "Подборки"];
     if (!allowed.includes(active)) active = "Все";
+    if (sub) {
+      const hasSubcategory = articles.some((item) =>
+        (active === "Все" || item.category === active) && item.subcategory === sub,
+      );
+      if (!hasSubcategory) sub = null;
+    }
 
     function apply(category) {
       active = category;
@@ -319,6 +347,7 @@
       });
       const heading = document.querySelector("[data-catalog-heading]");
       if (heading) heading.textContent = sub || (category === "Все" ? "Все материалы" : category);
+      setActiveNav(sub === "Советы начинающим" ? "useful" : "catalog");
     }
     document
       .querySelectorAll("[data-filter]")
@@ -329,7 +358,6 @@
         else params.set("category", btn.dataset.filter);
         const query = params.toString();
         history.replaceState(null, "", location.pathname + (query ? "?" + query : "") + location.hash);
-        setActiveNav("catalog");
         apply(btn.dataset.filter);
       }));
     apply(active);
@@ -418,6 +446,7 @@
     const article = articles.find((item) => item.id === id);
     if (!article) {
       document.title = "Материал не найден — Камертона";
+      addMeta("name", "robots", "noindex, follow");
       root.innerHTML = `
         <section class="section container">
           <div class="empty-state">
@@ -431,13 +460,12 @@
     const index = articles.indexOf(article);
     const prev = articles[(index - 1 + articles.length) % articles.length];
     const next = articles[(index + 1) % articles.length];
-    const related = articles
-      .filter((item) => item.id !== article.id && item.category === article.category)
-      .slice(0, 3);
+    const related = article.related
+      ? article.related.map((id) => articles.find((item) => item.id === id)).filter(Boolean)
+      : articles.filter((item) => item.id !== article.id && item.category === article.category).slice(0, 3);
     const categoryUrl = encodeURIComponent(article.category);
     const favoriteClass = isFavorite(article.id) ? " is-active" : "";
     const favoriteText = isFavorite(article.id) ? "В избранном" : "Сохранить";
-    const recommendations = related.length ? related : articles.slice(0, 3);
     const contentsMarkup = article.sections
       .map(
         (section, sectionIndex) => `
@@ -451,17 +479,18 @@
           <section id="section-${sectionIndex + 1}">
             <h2>${section.heading}</h2>
             ${section.paragraphs.map((paragraph) => `<p>${paragraph}</p>`).join("")}
+            ${section.steps ? `<ol>${section.steps.map((step) => `<li>${step}</li>`).join("")}</ol>` : ""}
             ${sectionIndex === 0 ? `<blockquote>${article.quote}</blockquote>` : ""}
           </section>
         `,
       )
       .join("");
     const tipsMarkup = article.tips.map((tip) => `<li>${tip}</li>`).join("");
-    const relatedMarkup = recommendations.map((item) => cardMarkup(item)).join("");
+    const relatedMarkup = related.map((item) => cardMarkup(item)).join("");
 
     root.innerHTML = `
       <nav class="breadcrumbs container" aria-label="Хлебные крошки">
-        <a href="index.html">Главная</a>
+        <a href="./">Главная</a>
         <span>/</span>
         <a href="catalog.html?category=${categoryUrl}">${article.category}</a>
         <span>/</span>
@@ -489,7 +518,7 @@
           </div>
         </header>
         <figure class="article-cover container-wide">
-          <img src="${article.image}" alt="${article.imageAlt}">
+          <img src="${article.image}" alt="${article.imageAlt}" width="1200" height="820">
           <figcaption>${article.imageAlt}. Иллюстрация редакции.</figcaption>
         </figure>
         <div class="article-layout container">
@@ -517,7 +546,7 @@
           <strong>${next.title}</strong>
         </a>
       </nav>
-      <section class="section container">
+      ${relatedMarkup ? `<section class="section container">
         <div class="section-heading">
           <div>
             <span class="eyebrow">Продолжить чтение</span>
@@ -528,10 +557,39 @@
           </a>
         </div>
         <div class="card-grid">${relatedMarkup}</div>
-      </section>`;
+      </section>` : ""}`;
+    setArticleMetadata(article);
+  }
+
+  function addMeta(attribute, key, content) {
+    const meta = document.createElement("meta");
+    meta.setAttribute(attribute, key);
+    meta.content = content;
+    document.head.appendChild(meta);
+  }
+
+  function setArticleMetadata(article) {
+    const url = new URL(articleUrl(article), siteOrigin).href;
+    const image = new URL(article.image, siteOrigin).href;
     document.title = `${article.title} — Камертона`;
-    const description = document.querySelector('meta[name="description"]');
-    if (description) description.content = article.excerpt;
+    document.querySelector('meta[name="description"]').content = article.excerpt;
+    const canonical = document.createElement("link");
+    canonical.rel = "canonical";
+    canonical.href = url;
+    document.head.appendChild(canonical);
+
+    const ogTags = {
+      title: document.title,
+      description: article.excerpt,
+      type: "article",
+      url,
+      image,
+      "image:alt": article.imageAlt,
+      locale: "ru_RU",
+      site_name: "Камертона",
+    };
+    for (const [key, value] of Object.entries(ogTags)) addMeta("property", `og:${key}`, value);
+
     const schema = document.createElement("script");
     schema.type = "application/ld+json";
     schema.textContent = JSON.stringify({
@@ -540,7 +598,10 @@
       headline: article.title,
       description: article.excerpt,
       datePublished: article.isoDate,
-      image: article.image,
+      url,
+      mainEntityOfPage: url,
+      inLanguage: "ru-RU",
+      image,
       author: { "@type": "Person", name: "Ангелина" },
       publisher: { "@type": "Organization", name: "Камертона" },
       articleSection: article.category,
@@ -570,7 +631,7 @@
 
   function setTheme(theme) {
     document.documentElement.dataset.theme = theme;
-    localStorage.setItem(themeKey, theme);
+    writeSetting(themeKey, theme);
     document.querySelectorAll(".theme-toggle").forEach((button) => {
       button.innerHTML = theme === "dark" ? icons.sun : icons.moon;
       button.setAttribute(
@@ -592,10 +653,10 @@
     const authorLink = document.querySelector(".contact-author-link");
     if (authorLink) {
       const visitedKey = "kamertona-contact-author-visited";
-      authorLink.classList.toggle("is-visited", localStorage.getItem(visitedKey) === "1");
+      authorLink.classList.toggle("is-visited", readSetting(visitedKey) === "1");
       authorLink.addEventListener("click", () => {
         authorLink.classList.add("is-visited");
-        localStorage.setItem(visitedKey, "1");
+        writeSetting(visitedKey, "1");
       });
     }
 
@@ -635,7 +696,7 @@
         ),
       );
     setTheme(
-      localStorage.getItem(themeKey) ||
+      readSetting(themeKey) ||
         (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"),
     );
 
@@ -648,11 +709,7 @@
     }
 
     const page = document.body.dataset.page;
-    const activeKey =
-      page === "catalog" && new URLSearchParams(location.search).get("sub") === "Советы начинающим"
-        ? "useful"
-        : page;
-    setActiveNav(activeKey);
+    if (page !== "catalog") setActiveNav(page);
     updateFavoriteCounters();
   }
 

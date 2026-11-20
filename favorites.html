@@ -8,28 +8,19 @@
       name="description"
       content="Сохранённые вами публикации музыкального блога Камертона. Список хранится локально в браузере."
     />
+    <meta name="robots" content="noindex, follow" />
     <link rel="icon" href="images/theory.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="css/style.css?v=defense-2" />
-    <script src="js/data.js" defer></script>
-    <script src="js/script.js?v=defense-2" defer></script>
-  <!-- Yandex.Metrika counter -->
-<script type="text/javascript">
-    (function(m,e,t,r,i,k,a){
-        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-        m[i].l=1*new Date();
-        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113590816', 'ym');
-    ym(113590816, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
-</script>
-<!-- /Yandex.Metrika counter -->
+    <link rel="stylesheet" href="css/style.css?v=seo-qa" />
+    <script src="js/data.js?v=seo-qa" defer></script>
+    <script src="js/script.js?v=seo-qa" defer></script>
+    <script src="js/metrika.js" defer></script>
   </head>
   <body data-page="favorites">
   <noscript><div><img src="https://mc.yandex.ru/watch/113590816" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
     <div data-site-header></div>
     <main id="main">
       <nav class="breadcrumbs container" aria-label="Хлебные крошки">
-        <a href="index.html">Главная</a>
+        <a href="./">Главная</a>
         <span>/</span>
         <span aria-current="page">Избранное</span>
       </nav>
@@ -50,6 +41,7 @@
           <h2>Сохранённые статьи</h2>
           <span class="catalog-count" data-favorites-count></span>
         </div>
+        <h2 class="sr-only">Сохранённые материалы</h2>
         <div class="card-grid" data-favorites-grid></div>
         <div class="empty-state" data-favorites-empty>
           <h2>Здесь пока тихо</h2>

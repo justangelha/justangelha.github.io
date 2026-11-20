@@ -8,43 +8,31 @@
       name="description"
       content="Музыкальный блог для тех, кто учится играть на фортепиано и скрипке, изучает теорию и ищет произведения для разучивания."
     />
-    <meta
-      name="keywords"
-      content="музыкальный блог, фортепиано, скрипка, теория музыки, произведения для начинающих"
-    />
     <meta name="author" content="Ангелина" />
-    <meta property="og:title" content="Камертона — блог о музыке как увлечении" />
-    <meta
-      property="og:description"
-      content="Практика, теория и музыка, к которой хочется возвращаться."
-    />
+    <link rel="canonical" href="https://justangelha.github.io/" />
+    <meta property="og:title" content="Камертона — уютный блог о музыке, инструментах и практике" />
+    <meta property="og:description" content="Музыкальный блог для тех, кто учится играть на фортепиано и скрипке, изучает теорию и ищет произведения для разучивания." />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="images/hero.svg" />
+    <meta property="og:url" content="https://justangelha.github.io/" />
+    <meta property="og:image" content="https://justangelha.github.io/images/hero.svg" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:site_name" content="Камертона" />
     <link rel="icon" href="images/theory.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="css/style.css?v=defense-2" />
+    <link rel="stylesheet" href="css/style.css?v=seo-qa" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "Blog",
         "name": "Камертона",
+        "url": "https://justangelha.github.io/",
         "description": "Блог о музыке как увлечении",
         "inLanguage": "ru-RU",
         "author": { "@type": "Person", "name": "Ангелина" }
       }
     </script>
-    <script src="js/data.js" defer></script>
-    <script src="js/script.js?v=defense-2" defer></script>
-  <!-- Yandex.Metrika counter -->
-<script type="text/javascript">
-    (function(m,e,t,r,i,k,a){
-        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-        m[i].l=1*new Date();
-        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113590816', 'ym');
-    ym(113590816, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
-</script>
-<!-- /Yandex.Metrika counter -->
+    <script src="js/data.js?v=seo-qa" defer></script>
+    <script src="js/script.js?v=seo-qa" defer></script>
+    <script src="js/metrika.js" defer></script>
   </head>
   <body data-page="home">
   <noscript><div><img src="https://mc.yandex.ru/watch/113590816" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
@@ -70,7 +58,7 @@
             </a>
           </div>
           <div class="hero-visual">
-            <img src="images/hero.svg" alt="Рояль в камерном интерьере с нотами" />
+            <img src="images/hero.svg" width="900" height="1100" fetchpriority="high" alt="Рояль в камерном интерьере с нотами" />
             <span class="hero-caption">Иллюстрация редакции · Камертона</span>
           </div>
         </div>
@@ -97,7 +85,7 @@
             </svg>
           </a>
         </div>
-        <div data-featured></div>
+        <div data-featured><a class="arrow-link" href="article.html?id=piano-from-zero">Как начать играть на фортепиано с нуля</a></div>
       </section>
 
       <section class="section section-tinted">
@@ -115,7 +103,7 @@
       <section class="section container">
         <div class="editorial-pair">
           <div class="editorial-image">
-            <img src="images/piano.svg" alt="Клавиши фортепиано и открытые ноты" loading="lazy" />
+            <img src="images/piano.svg" width="1200" height="820" alt="Клавиши фортепиано и открытые ноты" loading="lazy" />
           </div>
           <div class="editorial-copy">
             <span class="eyebrow">Инструмент крупным планом</span>
@@ -125,9 +113,9 @@
               которые помогают заниматься регулярно и слышать больше.
             </p>
             <div class="editorial-links">
-              <a href="catalog.html?category=Фортепиано">Для начинающих</a>
-              <a href="catalog.html?category=Фортепиано">Упражнения</a>
-              <a href="catalog.html?category=Фортепиано">Разбор произведений</a>
+              <a href="article.html?id=piano-from-zero">Для начинающих</a>
+              <a href="article.html?id=five-piano-exercises">Упражнения</a>
+              <a href="article.html?id=practice-piano-right">Разбор произведений</a>
             </div>
             <a class="arrow-link" href="catalog.html?category=Фортепиано">
               Все о фортепиано
@@ -145,7 +133,7 @@
           <div class="editorial-pair reverse">
             <div class="editorial-image">
               <img
-                src="images/violin.svg"
+                src="images/violin.svg" width="1200" height="820"
                 alt="Скрипка и смычок на спокойном фоне"
                 loading="lazy"
               />
@@ -158,9 +146,9 @@
                 первых месяцев знакомства с инструментом.
               </p>
               <div class="editorial-links">
-                <a href="catalog.html?category=Скрипка">Для начинающих</a>
-                <a href="catalog.html?category=Скрипка">Работа со смычком</a>
-                <a href="catalog.html?category=Скрипка">Интонация</a>
+                <a href="article.html?id=first-violin-steps">Для начинающих</a>
+                <a href="article.html?id=how-to-hold-bow">Работа со смычком</a>
+                <a href="article.html?id=violin-intonation">Интонация</a>
               </div>
               <a class="arrow-link" href="catalog.html?category=Скрипка">
                 Все о скрипке
